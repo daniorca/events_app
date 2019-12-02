@@ -1,11 +1,14 @@
 import 'package:code_challenge/src/models/event_model.dart' as EventsModel;
+import 'package:code_challenge/src/providers/event_item_provider.dart';
 import 'package:code_challenge/src/providers/events_provider.dart';
 import 'package:code_challenge/src/routes/routes.dart';
 import 'package:code_challenge/src/ui/components/custom_appbar.dart';
+import 'package:code_challenge/src/ui/components/progress_indicator.dart';
 import 'package:code_challenge/src/ui/components/small_dot.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -53,27 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(height: _deviceSize.height * .025),
               _buildSearchField(context),
               SizedBox(height: _deviceSize.height * .02),
-              Container(
-                width: _deviceSize.width * .9,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Spacer(),
-                    FlatButton(
-                      child: Text('See All',
-                          style: Theme.of(context)
-                              .textTheme
-                              .display3
-                              .copyWith(color: Colors.grey[400])),
-                      onPressed: () {
-                        pageNumber = 0;
-                        _searchController.clear();
-                        _eventsProvider.getEvents(pageNumber.toString());
-                      },
-                    )
-                  ],
-                ),
-              ),
+              _buildSeeAll(_deviceSize, context),
               SizedBox(height: _deviceSize.height * .01),
               _buildEventsList(_deviceSize),
             ],
@@ -83,11 +66,35 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Container _buildSeeAll(Size _deviceSize, BuildContext context) {
+    return Container(
+      width: _deviceSize.width * .9,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          Spacer(),
+          FlatButton(
+            child: Text('See All',
+                style: Theme.of(context)
+                    .textTheme
+                    .display3
+                    .copyWith(color: Colors.grey[400])),
+            onPressed: () {
+              pageNumber = 0;
+              _searchController.clear();
+              _eventsProvider.getEvents(pageNumber.toString());
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   Expanded _buildEventsList(Size deviceSize) {
     return Expanded(
       child: Consumer<EventsProvider>(
         builder: (_, eventsProvider, __) => eventsProvider.events.isEmpty
-            ? _buildProgressIndicator()
+            ? MyProgressIndicator()
             : NotificationListener<ScrollNotification>(
                 onNotification: _handleScrollNotification,
                 child: ListView.builder(
@@ -96,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   controller: _scrollController,
                   itemBuilder: (BuildContext context, int index) {
                     if (index >= eventsProvider.events.length - 1) {
-                      return _buildProgressIndicator();
+                      return MyProgressIndicator();
                     } else {
                       final eventItem = eventsProvider.events[index];
                       return _buildEventItem(eventItem, deviceSize);
@@ -147,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildEventItem(EventsModel.EventElement event, Size deviceSize) {
+  Widget _buildEventItem(EventItem eventItem, Size deviceSize) {
     return Container(
       padding:
           EdgeInsets.symmetric(horizontal: deviceSize.width * .05, vertical: 5),
@@ -162,16 +169,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     EdgeInsets.symmetric(horizontal: deviceSize.width * .04),
                 child: Column(
                   children: <Widget>[
-                    Text(DateFormat("dd").format(event.dates.start.localDate),
+                    Text(DateFormat("dd").format(eventItem.event.dates.start.localDate),
                         style: Theme.of(context).textTheme.display3.copyWith(
                             color: Colors.red[700],
                             fontWeight: FontWeight.bold)),
-                    Text(DateFormat("MMM").format(event.dates.start.localDate),
+                    Text(DateFormat("MMM").format(eventItem.event.dates.start.localDate),
                         style: Theme.of(context)
                             .textTheme
                             .display4
                             .copyWith(fontWeight: FontWeight.bold)),
-                    Text(DateFormat("yyyy").format(event.dates.start.localDate),
+                    Text(DateFormat("yyyy").format(eventItem.event.dates.start.localDate),
                         style: Theme.of(context)
                             .textTheme
                             .display1
@@ -187,40 +194,41 @@ class _HomeScreenState extends State<HomeScreen> {
               Spacer(),
               InkWell(
                 child: Container(
-                  height: deviceSize.height * .16,
+                  height: deviceSize.height * .18,
                   width: deviceSize.width * .6,
-                  child: Card(
-                    elevation: 10,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: Image.network(event.images
-                                      .where((img) =>
-                                          img.ratio == EventsModel.Ratio.THE_43)
-                                      .first
-                                      ?.url ??
-                                  null)
-                              .image,
-                          fit: BoxFit.cover,
+                  child: Hero(
+                    tag: eventItem.event.id,
+                    child: Card(
+                        elevation: 10,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
                         ),
-                      ),
-                    ),
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        child: CachedNetworkImage(
+                          imageUrl: eventItem.event.images
+                                  .where((img) =>
+                                      img.ratio == EventsModel.Ratio.THE_43)
+                                  .first
+                                  ?.url ??
+                              null,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => MyProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                        )),
                   ),
                 ),
-                onTap: () =>
-                    Navigator.pushNamed(context, kEventDetailsScreenRoute),
+                onTap: () {
+                  _eventsProvider.selectedEvent = eventItem;
+                  Navigator.pushNamed(context, kEventDetailsScreenRoute);
+                },
               )
             ],
           ),
           SizedBox(height: 5),
           Padding(
             padding: const EdgeInsets.only(right: 6),
-            child: Text(event.name,
+            child: Text(eventItem.event.name,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context)
                     .textTheme
@@ -231,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(right: 6),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: event.classifications
+              children: eventItem.event.classifications
                   .map((c) => Row(
                         children: <Widget>[
                           Text(c.segment.name,
@@ -270,9 +278,5 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return false;
-  }
-
-  Widget _buildProgressIndicator() {
-    return Center(child: CircularProgressIndicator());
   }
 }

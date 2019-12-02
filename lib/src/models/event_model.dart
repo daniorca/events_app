@@ -4,18 +4,18 @@ Event eventFromJson(String str) => Event.fromJson(json.decode(str));
 
 class Event {
     PurpleEmbedded embedded;
-    FluffyLinks links;
+    //FluffyLinks links;
     Page page;
 
     Event({
         this.embedded,
-        this.links,
+        //this.links,
         this.page,
     });
 
     factory Event.fromJson(Map<String, dynamic> json) => Event(
         embedded: PurpleEmbedded.fromJson(json["_embedded"]),
-        links: FluffyLinks.fromJson(json["_links"]),
+        //links: FluffyLinks.fromJson(json["_links"]),
         page: Page.fromJson(json["page"]),
     );
 
@@ -88,7 +88,7 @@ class EventElement {
         priceRanges: json["priceRanges"] != null ? List<PriceRange>.from(json["priceRanges"].map((x) => PriceRange.fromJson(x))) : [],
         products: json["products"] != null ? List<Product>.from(json["products"].map((x) => Product.fromJson(x))) : [],
         seatmap: json["seatmap"] != null ? Seatmap.fromJson(json["seatmap"]) : null,
-        links: PurpleLinks.fromJson(json["_links"]),
+        //links: PurpleLinks.fromJson(json["_links"]),
         //embedded: FluffyEmbedded.fromJson(json["_embedded"]),
     );
 }
@@ -298,7 +298,7 @@ class AttractionLinks {
     });
 
     factory AttractionLinks.fromJson(Map<String, dynamic> json) => AttractionLinks(
-        self: First.fromJson(json["self"]),
+        self: json["self"] != null ? First.fromJson(json["self"]) : null,
     );
 }
 
@@ -310,7 +310,7 @@ class First {
     });
 
     factory First.fromJson(Map<String, dynamic> json) => First(
-        href: json["href"],
+        href: json["href"] != null ? json["href"] : '',
     );
 }
 
@@ -554,7 +554,7 @@ class PurpleLinks {
     });
 
     factory PurpleLinks.fromJson(Map<String, dynamic> json) => PurpleLinks(
-        self: First.fromJson(json["self"]),
+        //self: First.fromJson(json["self"]),
         attractions: json["attractions"] != null ? List<First>.from(json["attractions"].map((x) => First.fromJson(x))) : [],
         venues: json["venues"] != null ? List<First>.from(json["venues"].map((x) => First.fromJson(x))) : [],
     );
@@ -683,26 +683,26 @@ class Seatmap {
     );
 }
 
-class FluffyLinks {
-    First first;
-    First self;
-    First next;
-    First last;
+// class FluffyLinks {
+//     First first;
+//     First self;
+//     First next;
+//     First last;
 
-    FluffyLinks({
-        this.first,
-        this.self,
-        this.next,
-        this.last,
-    });
+//     FluffyLinks({
+//         this.first,
+//         this.self,
+//         this.next,
+//         this.last,
+//     });
 
-    factory FluffyLinks.fromJson(Map<String, dynamic> json) => FluffyLinks(
-        first: First.fromJson(json["first"]),
-        self: First.fromJson(json["self"]),
-        next: First.fromJson(json["next"]),
-        last: First.fromJson(json["last"]),
-    );
-}
+//     factory FluffyLinks.fromJson(Map<String, dynamic> json) => FluffyLinks(
+//         first: First.fromJson(json["first"]),
+//         self: First.fromJson(json["self"]),
+//         next: First.fromJson(json["next"]),
+//         last: First.fromJson(json["last"]),
+//     );
+// }
 
 class Page {
     int size;
