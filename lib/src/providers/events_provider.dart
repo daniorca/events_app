@@ -15,5 +15,5 @@ class EventsProvider with ChangeNotifier{
     final records = await _eventsRepository.getEvents(pageNumber, searchBy);
     this._events.addAll(records.embedded.events);
     notifyListeners();
-  } 
+  }
 }

@@ -8,8 +8,8 @@ ThemeData _buildEventsTheme() {
     accentColor: Color(0xff32198f),
     canvasColor: Color(0xffF2F2F2),
     errorColor: Colors.red[900],
-    primaryIconTheme: IconThemeData(color: Colors.black),
-    backgroundColor: Colors.white,
+    //primaryIconTheme: IconThemeData(color: Colors.black),
+    //backgroundColor: Colors.white,
     textTheme: TextTheme(
       title: TextStyle(
         fontFamily: 'GTE',
