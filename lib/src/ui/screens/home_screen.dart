@@ -1,14 +1,10 @@
-import 'package:code_challenge/src/models/event_model.dart' as EventsModel;
-import 'package:code_challenge/src/providers/event_item_provider.dart';
 import 'package:code_challenge/src/providers/events_provider.dart';
-import 'package:code_challenge/src/routes/routes.dart';
 import 'package:code_challenge/src/ui/components/custom_appbar.dart';
 import 'package:code_challenge/src/ui/components/progress_indicator.dart';
-import 'package:code_challenge/src/ui/components/small_dot.dart';
+import 'package:code_challenge/src/ui/screens/event_item_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -78,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: Theme.of(context)
                     .textTheme
                     .display3
-                    .copyWith(color: Colors.grey[400])),
+                    .copyWith(color: Colors.grey[500])),
             onPressed: () {
               pageNumber = 0;
               _searchController.clear();
@@ -105,8 +101,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (index >= eventsProvider.events.length - 1) {
                       return MyProgressIndicator();
                     } else {
-                      final eventItem = eventsProvider.events[index];
-                      return _buildEventItem(eventItem, deviceSize);
+                      return ChangeNotifierProvider.value(
+                        value: eventsProvider.events[index],
+                        child: EventItemWidget(),
+                      );
                     }
                   },
                 ),
@@ -150,122 +148,6 @@ class _HomeScreenState extends State<HomeScreen> {
             borderSide: BorderSide.none,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildEventItem(EventItem eventItem, Size deviceSize) {
-    return Container(
-      padding:
-          EdgeInsets.symmetric(horizontal: deviceSize.width * .05, vertical: 5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: <Widget>[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: deviceSize.width * .04),
-                child: Column(
-                  children: <Widget>[
-                    Text(DateFormat("dd").format(eventItem.event.dates.start.localDate),
-                        style: Theme.of(context).textTheme.display3.copyWith(
-                            color: Colors.red[700],
-                            fontWeight: FontWeight.bold)),
-                    Text(DateFormat("MMM").format(eventItem.event.dates.start.localDate),
-                        style: Theme.of(context)
-                            .textTheme
-                            .display4
-                            .copyWith(fontWeight: FontWeight.bold)),
-                    Text(DateFormat("yyyy").format(eventItem.event.dates.start.localDate),
-                        style: Theme.of(context)
-                            .textTheme
-                            .display1
-                            .copyWith(color: Colors.grey)),
-                    Container(
-                        margin: EdgeInsets.only(top: 3),
-                        color: Colors.grey[400],
-                        height: deviceSize.height * .10,
-                        width: 0.4)
-                  ],
-                ),
-              ),
-              Spacer(),
-              InkWell(
-                child: Container(
-                  height: deviceSize.height * .18,
-                  width: deviceSize.width * .6,
-                  child: Hero(
-                    tag: eventItem.event.id,
-                    child: Card(
-                        elevation: 10,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        child: CachedNetworkImage(
-                          imageUrl: eventItem.event.images
-                                  .where((img) =>
-                                      img.ratio == EventsModel.Ratio.THE_43)
-                                  .first
-                                  ?.url ??
-                              null,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => MyProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
-                        )),
-                  ),
-                ),
-                onTap: () {
-                  _eventsProvider.selectedEvent = eventItem;
-                  Navigator.pushNamed(context, kEventDetailsScreenRoute);
-                },
-              )
-            ],
-          ),
-          SizedBox(height: 5),
-          Padding(
-            padding: const EdgeInsets.only(right: 6),
-            child: Text(eventItem.event.name,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context)
-                    .textTheme
-                    .display3
-                    .copyWith(color: Colors.grey, fontWeight: FontWeight.w600)),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 6),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: eventItem.event.classifications
-                  .map((c) => Row(
-                        children: <Widget>[
-                          Text(c.segment.name,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .display1
-                                  .copyWith(color: Colors.grey)),
-                          SmallDot(),
-                          Text(c.genre.name,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .display1
-                                  .copyWith(color: Colors.grey)),
-                          SmallDot(),
-                          Text(c.subGenre.name,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .display1
-                                  .copyWith(color: Colors.grey))
-                        ],
-                      ))
-                  .toList(),
-            ),
-          ),
-          SizedBox(height: 15)
-        ],
       ),
     );
   }

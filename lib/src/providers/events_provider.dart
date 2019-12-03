@@ -8,6 +8,8 @@ class EventsProvider with ChangeNotifier{
   List<EventItem> _events = [];
   List<EventItem> get events => [...this._events];
 
+  List<EventItem> get favoriteEvents => [...this._events.where((e) => e.isFavorite)];
+
   EventItem _selectedEvent;
   EventItem get selectedEvent => this._selectedEvent;
   set selectedEvent(EventItem value) {

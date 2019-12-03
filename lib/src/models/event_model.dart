@@ -89,7 +89,7 @@ class EventElement {
         products: json["products"] != null ? List<Product>.from(json["products"].map((x) => Product.fromJson(x))) : [],
         seatmap: json["seatmap"] != null ? Seatmap.fromJson(json["seatmap"]) : null,
         //links: PurpleLinks.fromJson(json["_links"]),
-        //embedded: FluffyEmbedded.fromJson(json["_embedded"]),
+        embedded: FluffyEmbedded.fromJson(json["_embedded"]),
     );
 }
 

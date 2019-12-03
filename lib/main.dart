@@ -1,4 +1,4 @@
-import 'package:code_challenge/src/providers/events_provider.dart';
+import 'package:code_challenge/src/providers/setup_provider.dart';
 import 'package:code_challenge/src/routes/routes.dart';
 import 'package:code_challenge/src/themes/theme_data.dart';
 import 'package:code_challenge/src/ui/screens/home_screen.dart';
@@ -10,8 +10,8 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<EventsProvider>(
-      create: (context) => EventsProvider(),
+    return MultiProvider(
+      providers: SetupProvider.kProviders,
       child: MaterialApp(
         title: 'Events',
         theme: kEventsTheme,

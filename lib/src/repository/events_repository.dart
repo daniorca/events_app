@@ -12,4 +12,13 @@ class EventsRepository {
       throw e;
     }
   }
+
+  // Future<String> getEventDetails(String eventId) async {
+  //   try {
+  //     final response = await _eventsService.getEventDetails(eventId);
+  //     //return eventFromJson(response);
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
 }
