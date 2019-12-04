@@ -7,18 +7,9 @@ class EventsRepository {
   Future<Event> getEvents(String pageNumber, [String searchBy = '']) async {
     try {
       final response = await _eventsService.getEvents(pageNumber, searchBy);
-      return eventFromJson(response);
+      return response != null ? eventFromJson(response) : null;
     } catch (e) {
       throw e;
     }
   }
-
-  // Future<String> getEventDetails(String eventId) async {
-  //   try {
-  //     final response = await _eventsService.getEventDetails(eventId);
-  //     //return eventFromJson(response);
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // }
 }

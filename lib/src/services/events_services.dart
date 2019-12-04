@@ -20,18 +20,4 @@ class EventsService {
       throw e;
     }
   }
-
-  Future<String> getEventDetails(String eventId) async {
-    try {
-      final response = await http.get(
-        Uri.encodeFull('${kRootUrl}events/$eventId.json?apikey=$kConsumerAPIKey'),
-        headers: _headers,
-      );
-      return response.body;
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  
 }

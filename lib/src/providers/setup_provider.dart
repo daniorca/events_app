@@ -1,5 +1,6 @@
 import 'package:code_challenge/src/providers/event_item_provider.dart';
 import 'package:code_challenge/src/providers/events_provider.dart';
+import 'package:code_challenge/src/providers/wishlist_provider.dart';
 import 'package:provider/provider.dart';
 
 class SetupProvider {
@@ -9,6 +10,7 @@ class SetupProvider {
 
   static List<SingleChildCloneableWidget> kDependentServices = [
     ChangeNotifierProvider<EventsProvider>(create: (_) => EventsProvider()),
+    ChangeNotifierProvider<WishListProvider>(create: (_) => WishListProvider()),
     ChangeNotifierProvider<EventItem>(create: (_) => EventItem.empty()),
   ];
 }

@@ -2,6 +2,7 @@ import 'package:code_challenge/src/models/event_model.dart';
 import 'package:flutter/material.dart';
 
 class EventItem with ChangeNotifier{
+
   EventElement event;
   bool isFavorite = false;
 

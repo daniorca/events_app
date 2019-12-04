@@ -1,10 +1,11 @@
+import 'package:code_challenge/src/constants/app_constants.dart';
 import 'package:code_challenge/src/providers/events_provider.dart';
-import 'package:code_challenge/src/ui/components/custom_appbar.dart';
+import 'package:code_challenge/src/ui/components/image_profile.dart';
 import 'package:code_challenge/src/ui/components/progress_indicator.dart';
+import 'package:code_challenge/src/ui/components/wishlist.dart';
 import 'package:code_challenge/src/ui/screens/event_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -12,34 +13,52 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   int pageNumber = 0;
   final _scrollController = ScrollController();
   final _searchController = TextEditingController();
   EventsProvider _eventsProvider;
+  bool _initialized = false;
 
   @override
-  void initState() {
-    super.initState();
-    getEvents();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _scrollController.dispose();
-    _searchController.dispose();
-    _eventsProvider.dispose();
-  }
-
-  Future<void> getEvents() async {
-    _eventsProvider = Provider.of<EventsProvider>(context, listen: false)
-      ..getEvents(pageNumber.toString());
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      try {
+        _eventsProvider = Provider.of<EventsProvider>(context, listen: false)
+          ..getEvents(pageNumber.toString());
+      } catch (e) {
+        showSnackBar(kGenericErrorMessage);
+      }
+      _initialized = true;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final _deviceSize = MediaQuery.of(context).size;
     return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: Text(
+          'Events',
+          style: Theme.of(context)
+              .textTheme
+              .title
+              .copyWith(color: Theme.of(context).primaryColor),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Theme.of(context).canvasColor,
+        leading: IconButton(
+          icon: Icon(
+            Icons.menu,
+            color: Colors.black,
+          ),
+          onPressed: () {},
+        ),
+        actions: <Widget>[Wishlist(), ImageProfile()],
+      ),
       body: SafeArea(
         bottom: false,
         child: Container(
@@ -48,7 +67,6 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(
             children: <Widget>[
-              CustomAppBar(),
               SizedBox(height: _deviceSize.height * .025),
               _buildSearchField(context),
               SizedBox(height: _deviceSize.height * .02),
@@ -78,7 +96,11 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               pageNumber = 0;
               _searchController.clear();
-              _eventsProvider.getEvents(pageNumber.toString());
+              try {
+                _eventsProvider.getEvents(pageNumber.toString());
+              } catch (e) {
+                showSnackBar(kGenericErrorMessage);
+              }
             },
           )
         ],
@@ -132,8 +154,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onPressed: () {
                 pageNumber = 0;
-                _eventsProvider.getEvents(
-                    pageNumber.toString(), _searchController.text);
+                try {
+                  _eventsProvider.getEvents(
+                      pageNumber.toString(), _searchController.text);
+                } catch (e) {
+                  showSnackBar(kGenericErrorMessage);
+                }
+                _scrollToTop();
               },
             ),
           ),
@@ -156,9 +183,36 @@ class _HomeScreenState extends State<HomeScreen> {
     if (notification is ScrollEndNotification &&
         _scrollController.position.extentAfter == 0) {
       pageNumber++;
-      _eventsProvider.getEvents(pageNumber.toString(), _searchController.text);
+      try {
+        _eventsProvider.getEvents(
+            pageNumber.toString(), _searchController.text);
+      } catch (e) {
+        showSnackBar(kGenericErrorMessage);
+      }
     }
 
     return false;
+  }
+
+  void _scrollToTop() {
+    _scrollController.animateTo(_scrollController.position.minScrollExtent,
+        duration: Duration(milliseconds: 1000), curve: Curves.easeIn);
+  }
+
+  void showSnackBar(String message) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content:
+          Text(message, style: TextStyle(fontSize: 16, color: Colors.white)),
+      backgroundColor: Theme.of(context).errorColor,
+      duration: Duration(seconds: 2),
+    ));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+    _searchController.dispose();
+    _eventsProvider.dispose();
   }
 }
