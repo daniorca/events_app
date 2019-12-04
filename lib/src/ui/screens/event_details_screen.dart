@@ -57,9 +57,11 @@ class EventDetailsScreen extends StatelessWidget {
                   buildVenueCard(_deviceSize, selectedEvent, context),
                   buildSeatMap(_deviceSize, selectedEvent),
                   SizedBox(height: 8),
-                  Text(selectedEvent.event.info ?? '',
-                      style: Theme.of(context).textTheme.display2.copyWith(
-                          color: Colors.grey, fontWeight: FontWeight.w600))
+                  Expanded(
+                    child: Text(selectedEvent.event.info ?? '',
+                        style: Theme.of(context).textTheme.display2.copyWith(
+                            color: Colors.grey, fontWeight: FontWeight.w600)),
+                  )
                 ],
               ),
             ),

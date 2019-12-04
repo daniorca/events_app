@@ -39,19 +39,20 @@ class EventItemWidget extends StatelessWidget {
                     .display3
                     .copyWith(color: Colors.grey, fontWeight: FontWeight.w600)),
           ),
-          buildGenreInfo(eventItem, context),
+          buildGenreInfo(eventItem, context, deviceSize),
           SizedBox(height: 15)
         ],
       ),
     );
   }
 
-  Widget buildGenreInfo(EventItem eventItem, BuildContext context) {
-    return Padding(
+  Widget buildGenreInfo(EventItem eventItem, BuildContext context, Size deviceSize) {
+    return Container(
+      width: deviceSize.width * .8,
       padding: const EdgeInsets.only(right: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: eventItem.event.classifications
+        children: eventItem.event.classifications.take(1)
             .map((c) => Row(
                   children: <Widget>[
                     Text(c.segment?.name ?? '',
