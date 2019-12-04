@@ -46,35 +46,39 @@ class EventItemWidget extends StatelessWidget {
     );
   }
 
-  Widget buildGenreInfo(EventItem eventItem, BuildContext context, Size deviceSize) {
+  Widget buildGenreInfo(
+      EventItem eventItem, BuildContext context, Size deviceSize) {
     return Container(
       width: deviceSize.width * .8,
       padding: const EdgeInsets.only(right: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: eventItem.event.classifications.take(1)
-            .map((c) => Row(
-                  children: <Widget>[
-                    Text(c.segment?.name ?? '',
-                        style: Theme.of(context)
-                            .textTheme
-                            .display1
-                            .copyWith(color: Colors.grey)),
-                    SmallDot(),
-                    Text(c.genre?.name ?? '',
-                        style: Theme.of(context)
-                            .textTheme
-                            .display1
-                            .copyWith(color: Colors.grey)),
-                    SmallDot(),
-                    Text(c.subGenre?.name ?? '',
-                        style: Theme.of(context)
-                            .textTheme
-                            .display1
-                            .copyWith(color: Colors.grey))
-                  ],
-                ))
-            .toList(),
+        children: eventItem.event.classifications.isNotEmpty
+            ? eventItem.event.classifications
+                .take(1)
+                .map((c) => Row(
+                      children: <Widget>[
+                        Text(c.segment?.name ?? '',
+                            style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .copyWith(color: Colors.grey)),
+                        SmallDot(),
+                        Text(c.genre?.name ?? '',
+                            style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .copyWith(color: Colors.grey)),
+                        SmallDot(),
+                        Text(c.subGenre?.name ?? '',
+                            style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .copyWith(color: Colors.grey))
+                      ],
+                    ))
+                .toList()
+            : Container(),
       ),
     );
   }
