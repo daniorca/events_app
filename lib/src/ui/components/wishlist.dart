@@ -19,7 +19,7 @@ class Wishlist extends StatelessWidget {
           child: Consumer<WishListProvider>(
             builder: (_, eventItemProvier, __) => IconButton(
               icon: AnimatedContainer(
-                duration: Duration(milliseconds: 500),
+                duration: Duration(milliseconds: 400),
                 height: eventItemProvier.startIconBigger ? 30 : 16,
                 child: Icon(
                   Icons.star,

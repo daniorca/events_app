@@ -22,7 +22,7 @@ class WishListProvider with ChangeNotifier{
   void animateIcon() async{
      _startIconBigger = false;
     notifyListeners();
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 400));
      _startIconBigger = true;
     notifyListeners();
   }
