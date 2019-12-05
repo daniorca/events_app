@@ -36,7 +36,10 @@ class EventDetailsScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: <Widget>[
-          Wishlist(),
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Wishlist(),
+          ),
         ],
       ),
       body: ChangeNotifierProvider<EventItem>.value(
@@ -75,7 +78,7 @@ class EventDetailsScreen extends StatelessWidget {
       elevation: 0,
       child: Container(
         margin: EdgeInsets.all(4),
-        height: _deviceSize.height * 0.09,
+        height: _deviceSize.height * 0.12,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[

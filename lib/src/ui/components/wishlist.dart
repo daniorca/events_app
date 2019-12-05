@@ -4,55 +4,32 @@ import 'package:code_challenge/src/ui/components/badge.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class Wishlist extends StatefulWidget {
-  @override
-  _WishlistState createState() => _WishlistState();
-}
-
-class _WishlistState extends State<Wishlist>
-    with SingleTickerProviderStateMixin {
-  AnimationController animationController;
-  Animation<double> animation;
-
-  @override
-  void initState() {
-    super.initState();
-    animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 800));
-
-    animation = Tween<double>(begin: 24, end: 16).animate(animationController);
-      // ..addListener(() {
-      //   setState(() {});
-      // });
-    
-  }
-
-  @override
-  void dispose() {
-    animationController.dispose();
-    super.dispose();
-  }
-
+class Wishlist extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<WishListProvider>(
-      builder: (_, wishListProvider, ch) {
-        return Badge(
-        child: ch,
-        value: wishListProvider.itemCount.toString(),
-      );
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(right: 6.0),
-        child: IconButton(
-            icon: Icon(
-              Icons.star,
-              size: animation.value,
-              color: Theme.of(context).primaryColor,
+        builder: (_, wishListProvider, ch) {
+          return Badge(
+            child: ch,
+            value: wishListProvider.itemCount.toString(),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(right: 6.0),
+          child: Consumer<WishListProvider>(
+            builder: (_, eventItemProvier, __) => IconButton(
+              icon: AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                height: eventItemProvier.startIconBigger ? 30 : 16,
+                child: Icon(
+                  Icons.star,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(kWishlistScreenRoute),
             ),
-            onPressed: () => Navigator.of(context).pushNamed(kWishlistScreenRoute),
           ),
-      ), 
-    );
+        ));
   }
 }

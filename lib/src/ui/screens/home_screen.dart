@@ -57,7 +57,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           onPressed: () {},
         ),
-        actions: <Widget>[Wishlist(), ImageProfile()],
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Wishlist(),
+          ),
+          ImageProfile(),
+        ],
       ),
       body: SafeArea(
         bottom: false,
