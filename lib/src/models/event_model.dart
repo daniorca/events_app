@@ -149,7 +149,7 @@ class FluffyEmbedded {
     });
 
     factory FluffyEmbedded.fromJson(Map<String, dynamic> json) => FluffyEmbedded(
-        venues: json["venues"] != null ? List<Venue>.from(json["venues"].map((x) => Venue.fromJson(x))) : [],
+        venues: json != null && json["venues"] != null ? List<Venue>.from(json["venues"].map((x) => Venue.fromJson(x))) : [],
     );
 }
 
