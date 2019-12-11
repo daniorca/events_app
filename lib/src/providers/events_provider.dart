@@ -9,9 +9,6 @@ class EventsProvider with ChangeNotifier {
   List<EventItem> _events = [];
   List<EventItem> get events => [...this._events];
 
-  List<EventItem> get favoriteEvents =>
-      [...this._events.where((e) => e.isFavorite)];
-
   EventItem _selectedEvent;
   EventItem get selectedEvent => this._selectedEvent;
   set selectedEvent(EventItem value) {
@@ -23,14 +20,13 @@ class EventsProvider with ChangeNotifier {
     if (pageNumber == '0') {
       this._events = [];
     }
-    try {
-      records = await _eventsRepository.getEvents(pageNumber, searchBy);
-    } catch (e) {
-      throw e;
+    records = await _eventsRepository.getEvents(pageNumber, searchBy);
+    if (records != null) {
+      this._events.addAll(
+          records.embedded.events.map((e) => EventItem(event: e)).toList());
+      notifyListeners();
+    } else {
+      throw Exception();
     }
-    
-    this._events.addAll(
-        records.embedded.events.map((e) => EventItem(event: e)).toList());
-    notifyListeners();
   }
 }

@@ -12,12 +12,14 @@ class EventsService {
   Future<String> getEvents(String pageNumber, [String searchBy = '']) async {
     try {
       final response = await http.get(
-        Uri.encodeFull('${kRootUrl}events.json?apikey=$kConsumerAPIKey&page=$pageNumber&keyword=$searchBy'),
+        Uri.encodeFull(
+            '${kRootUrl}events.json?apikey=$kConsumerAPIKey&page=$pageNumber&keyword=$searchBy'),
         headers: _headers,
       );
       return response.body;
     } catch (e) {
-      throw e;
+      print(e.message);
+      return null;
     }
   }
 }

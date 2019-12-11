@@ -21,15 +21,11 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _initialized = false;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
     if (!_initialized) {
-      try {
-        _eventsProvider = Provider.of<EventsProvider>(context, listen: false)
-          ..getEvents(pageNumber.toString());
-      } catch (e) {
-        showSnackBar(kGenericErrorMessage);
-      }
+      _eventsProvider = Provider.of<EventsProvider>(context, listen: false);
+      _getEvents();
       _initialized = true;
     }
   }
@@ -102,11 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               pageNumber = 0;
               _searchController.clear();
-              try {
-                _eventsProvider.getEvents(pageNumber.toString());
-              } catch (e) {
-                showSnackBar(kGenericErrorMessage);
-              }
+              _getEvents();
             },
           )
         ],
@@ -117,9 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Expanded _buildEventsList(Size deviceSize) {
     return Expanded(
       child: Consumer<EventsProvider>(
-        builder: (_, eventsProvider, __) => eventsProvider.events.isEmpty
-            ? MyProgressIndicator()
-            : NotificationListener<ScrollNotification>(
+        builder: (_, eventsProvider, __) => NotificationListener<ScrollNotification>(
                 onNotification: _handleScrollNotification,
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -158,14 +148,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.grey[200],
                 size: 20,
               ),
-              onPressed: () {
+              onPressed: () async {
                 pageNumber = 0;
-                try {
-                  _eventsProvider.getEvents(
-                      pageNumber.toString(), _searchController.text);
-                } catch (e) {
-                  showSnackBar(kGenericErrorMessage);
-                }
+                _getEvents();
                 _scrollToTop();
               },
             ),
@@ -189,15 +174,19 @@ class _HomeScreenState extends State<HomeScreen> {
     if (notification is ScrollEndNotification &&
         _scrollController.position.extentAfter == 0) {
       pageNumber++;
-      try {
-        _eventsProvider.getEvents(
-            pageNumber.toString(), _searchController.text);
-      } catch (e) {
-        showSnackBar(kGenericErrorMessage);
-      }
+      _getEvents();
     }
 
     return false;
+  }
+
+  Future<void> _getEvents() async {
+    try {
+      await _eventsProvider.getEvents(
+            pageNumber.toString(), _searchController.text);
+    } catch (_) {
+      showSnackBar(kGenericErrorMessage);
+    }
   }
 
   void _scrollToTop() {
@@ -210,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
       content:
           Text(message, style: TextStyle(fontSize: 16, color: Colors.white)),
       backgroundColor: Theme.of(context).errorColor,
-      duration: Duration(seconds: 2),
+      duration: Duration(seconds: 3),
     ));
   }
 
