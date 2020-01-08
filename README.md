@@ -1,4 +1,4 @@
-# ENGEL & VÖLKERS  - Code Challenge
+# Events App
 
 <img src="https://github.com/daniorca/ev_codechallenge/blob/master/screenshots/Home.png" width="250"> <img src="https://github.com/daniorca/ev_codechallenge/blob/master/screenshots/EventDetails_1.png" width="250"> <img src="https://github.com/daniorca/ev_codechallenge/blob/master/screenshots/EventDetails_2.png" width="250"> <img src="https://github.com/daniorca/ev_codechallenge/blob/master/screenshots/Wishlist.png" width="250">
 
